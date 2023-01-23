@@ -4,7 +4,7 @@ public enum Messages {
     DELETE_SUCCESFULLY("Delete the image successfully: "),
     IMAGE_NOT_EXIST("The image does not exist!"),
     DELETE_ERROR("Could not delete the image: "),
-    ERROR("Error")
+    ERROR(" Error ")
     ;
     private String message;
 

@@ -39,19 +39,19 @@ public class StorageController {
                 .body(downloadImg);
     }
 
-    @GetMapping(value = "/", produces = {MediaType.IMAGE_PNG_VALUE,MediaType.IMAGE_JPEG_VALUE})
+    @GetMapping(value = "/")
     public ResponseEntity<?> downloadImages() throws IOException {
-        List<byte[]> downloadImgs=storageService.downloadImages();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(downloadImgs.get(0));
+        List<String> downloadImgs=storageService.downloadImages();
+        return new ResponseEntity<>(downloadImgs,HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{fileName}")
     public ResponseEntity<?> deleteImage(@PathVariable String fileName) throws IOException {
 
         try {
+            boolean isDeleted = storageService.deleteImageByName(fileName);
 
-            if (storageService.deleteImageByName(fileName)) {
+            if (isDeleted) {
 
                 message = Messages.DELETE_SUCCESFULLY.getMessage() + fileName;
                 return ResponseEntity.status(HttpStatus.OK)
@@ -68,6 +68,7 @@ public class StorageController {
                     + fileName
                     + Messages.ERROR.getMessage()
                     + e.getMessage();
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseMessage(message));
         }

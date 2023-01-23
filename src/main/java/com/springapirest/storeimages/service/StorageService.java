@@ -5,6 +5,7 @@ import com.springapirest.storeimages.respository.StorageRepository;
 import com.springapirest.storeimages.util.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class StorageService {
 
     @Autowired
@@ -47,13 +49,13 @@ public class StorageService {
         return images;
     }
 
-    public List<byte[]> downloadImages() {
+    public List<String> downloadImages() {
 
         List<StorageEntity> dbImageData = storageRepository.findAll();
-        List<byte[]> images = new ArrayList<>();
+        List<String> images = new ArrayList<>();
 
         for(StorageEntity data:dbImageData){
-            images.add(ImageUtils.decompressImage(data.getImgdata()));
+            images.add(data.getName());
         }
 
         return images;
@@ -65,7 +67,6 @@ public class StorageService {
 
             storageRepository.deleteByName(fileName);
             return true;
-
         }
 
         else return false;
