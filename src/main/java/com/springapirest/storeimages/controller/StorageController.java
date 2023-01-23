@@ -1,6 +1,8 @@
 package com.springapirest.storeimages.controller;
 
+import com.springapirest.storeimages.message.ResponseMessage;
 import com.springapirest.storeimages.service.StorageService;
+import com.springapirest.storeimages.util.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +21,8 @@ public class StorageController {
     @Autowired
     private StorageService storageService;
 
+    private String message="";
+
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
 
@@ -32,8 +36,6 @@ public class StorageController {
     public ResponseEntity<?> downloadImage(@PathVariable String fileName) throws IOException {
         byte[] downloadImg=storageService.downloadImage(fileName);
         return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/jpg"))
-                .contentType(MediaType.valueOf("image/png"))
                 .body(downloadImg);
     }
 
@@ -44,12 +46,32 @@ public class StorageController {
                 .body(downloadImgs.get(0));
     }
 
-    @DeleteMapping(value = "/{fileName}",produces = {MediaType.APPLICATION_JSON_VALUE})
+    @DeleteMapping(value = "/{fileName}")
     public ResponseEntity<?> deleteImage(@PathVariable String fileName) throws IOException {
-        storageService.deleteImageByName(fileName);
-        String response = "{'response':'Imagen eliminada con éxito'}";
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(response);
+
+        try {
+
+            if (storageService.deleteImageByName(fileName)) {
+
+                message = Messages.DELETE_SUCCESFULLY.getMessage() + fileName;
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseMessage(message));
+
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseMessage(Messages.IMAGE_NOT_EXIST.getMessage()));
+
+        } catch (Exception e) {
+
+            message = Messages.DELETE_ERROR.getMessage()
+                    + fileName
+                    + Messages.ERROR.getMessage()
+                    + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseMessage(message));
+        }
+
     }
 
 }
