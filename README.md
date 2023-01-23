@@ -12,4 +12,7 @@ GET OR DELETE OF ONE IMAGES: http://52.90.175.102/api/image/nnmbre-imagen.format
 
 ![image](https://user-images.githubusercontent.com/71468355/214082059-4d58db7e-2d33-411c-899f-9e4a05225b53.png)
 
+## Ejemplo de conexión con base de datos ( Application.properties )
+
+![image](https://user-images.githubusercontent.com/71468355/214085448-9d69b1b6-dce1-4c89-a0ee-8c7dcc59d701.png)
 
