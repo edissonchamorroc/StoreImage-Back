@@ -22,22 +22,23 @@ public class StorageService {
 
     public String uploadImage(MultipartFile file) throws IOException {
 
-        if (!storageRepository.findByName(file.getOriginalFilename()).isPresent()) {
+        try {
+            if (!storageRepository.findByName(file.getOriginalFilename()).isPresent()) {
 
-            StorageEntity imageData = storageRepository.save(
-                    StorageEntity.builder()
-                    .name(file.getOriginalFilename())
-                    .type(file.getContentType())
-                    .imgdata(ImageUtils.compressImage(file.getBytes())).build());
+                StorageEntity imageData = storageRepository.save(
+                        StorageEntity.builder()
+                                .name(file.getOriginalFilename())
+                                .type(file.getContentType())
+                                .imgdata(ImageUtils.compressImage(file.getBytes())).build());
 
-            if (imageData != null) {
-
-                return file.getOriginalFilename();
 
             }
-        }
 
-        return file.getOriginalFilename();
+            return file.getOriginalFilename();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public byte[] downloadImage(String fileName) {
@@ -49,13 +50,13 @@ public class StorageService {
         return images;
     }
 
-    public List<String> downloadImages() {
+    public List<byte[]> downloadImages() {
 
         List<StorageEntity> dbImageData = storageRepository.findAll();
-        List<String> images = new ArrayList<>();
+        List<byte[]>  images = new ArrayList<>();
 
-        for(StorageEntity data:dbImageData){
-            images.add(data.getName());
+        for (StorageEntity data : dbImageData) {
+            images.add(ImageUtils.decompressImage(data.getImgdata()));
         }
 
         return images;
@@ -63,13 +64,13 @@ public class StorageService {
 
     public boolean deleteImageByName(String fileName) {
 
-        if(storageRepository.findByName(fileName).isPresent()){
+        if (storageRepository.findByName(fileName).isPresent()) {
 
             storageRepository.deleteByName(fileName);
-            return true;
-        }
 
-        else return false;
+            return true;
+
+        } else return false;
 
     }
 }

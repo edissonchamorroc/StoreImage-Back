@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -21,28 +22,66 @@ public class StorageController {
     @Autowired
     private StorageService storageService;
 
-    private String message="";
 
     @PostMapping
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) {
 
-        String uploadImg=storageService.uploadImage(file);
+        try {
+            String fileName = storageService.uploadImage(file);
 
-        return ResponseEntity.status(HttpStatus.OK).body(uploadImg);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseMessage(
+                            HttpStatus.OK.value(),
+                            Messages.UPLOAD_SUCCESFULLY.getMessage(),
+                            Messages.URI.getMessage() + fileName
+                    ));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
-    @GetMapping(value ="/{fileName}",produces = {MediaType.IMAGE_PNG_VALUE,MediaType.IMAGE_JPEG_VALUE})
-    public ResponseEntity<?> downloadImage(@PathVariable String fileName) throws IOException {
-        byte[] downloadImg=storageService.downloadImage(fileName);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(downloadImg);
+    @GetMapping(value = "/{fileName}")
+    public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
+
+        List<byte[]> content = new ArrayList<>();
+
+        try {
+            content.add(storageService.downloadImage(fileName));
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseMessage(
+                            HttpStatus.OK.value(),
+                            Messages.GET_SUCCESFULLY.getMessage(),
+                            Messages.GET_SUCCESFULLY.getMessage() + fileName,
+                            content
+                    ));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping(value = "/")
-    public ResponseEntity<?> downloadImages() throws IOException {
-        List<String> downloadImgs=storageService.downloadImages();
-        return new ResponseEntity<>(downloadImgs,HttpStatus.OK);
+    public ResponseEntity<?> downloadImages() {
+
+        try {
+
+            List<byte[]> content = storageService.downloadImages();
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseMessage(
+                            HttpStatus.OK.value(),
+                            Messages.GET_SUCCESFULLY.getMessage(),
+                            Messages.URI.getMessage(),
+                            content
+                    ));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @DeleteMapping(value = "/{fileName}")
@@ -53,24 +92,27 @@ public class StorageController {
 
             if (isDeleted) {
 
-                message = Messages.DELETE_SUCCESFULLY.getMessage() + fileName;
+
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body(new ResponseMessage(message));
+                        .body(new ResponseMessage(
+                                HttpStatus.OK.value(),
+                                Messages.DELETE_SUCCESFULLY.getMessage(),
+                                Messages.URI.getMessage() + fileName
+                        ));
 
             }
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseMessage(Messages.IMAGE_NOT_EXIST.getMessage()));
+                    .body(new ResponseMessage(
+                            HttpStatus.NOT_FOUND.value(),
+                            Messages.DELETE_ERROR.getMessage(),
+                            Messages.URI.getMessage() + fileName
+                    ));
 
         } catch (Exception e) {
 
-            message = Messages.DELETE_ERROR.getMessage()
-                    + fileName
-                    + Messages.ERROR.getMessage()
-                    + e.getMessage();
+            throw new RuntimeException(e);
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseMessage(message));
         }
 
     }

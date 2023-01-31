@@ -1,10 +1,14 @@
 package com.springapirest.storeimages.util;
 
 public enum Messages {
-    DELETE_SUCCESFULLY("Delete the image successfully: "),
+
+    DELETE_SUCCESFULLY("Deleted the image successfully"),
+    UPLOAD_SUCCESFULLY("Uploaded the image successfully"),
+    GET_SUCCESFULLY("Got the image successfully"),
     IMAGE_NOT_EXIST("The image does not exist!"),
-    DELETE_ERROR("Could not delete the image: "),
-    ERROR(" Error ")
+    DELETE_ERROR("Couldn't delete the image"),
+    URI("http://localhost:8080/api/image/")
+
     ;
     private String message;
 
