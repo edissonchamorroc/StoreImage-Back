@@ -20,7 +20,8 @@ public class ResponseMessage {
     private String path;
     @JsonProperty
     @Getter @Setter
-    private List<byte[]> content;
+    private List<String> content;
+
 
     public  ResponseMessage(int status,String message,String path){
         this.status=status;
@@ -28,7 +29,7 @@ public class ResponseMessage {
         this.path=path;
     }
 
-    public  ResponseMessage(int status,String message,String path, List<byte[]> content){
+    public  ResponseMessage(int status,String message,String path, List<String> content){
         this.status=status;
         this.message=message;
         this.path=path;

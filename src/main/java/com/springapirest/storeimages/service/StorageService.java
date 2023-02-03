@@ -50,13 +50,13 @@ public class StorageService {
         return images;
     }
 
-    public List<byte[]> downloadImages() {
+    public List<String> downloadImages() {
 
         List<StorageEntity> dbImageData = storageRepository.findAll();
-        List<byte[]>  images = new ArrayList<>();
+        List<String>  images = new ArrayList<>();
 
         for (StorageEntity data : dbImageData) {
-            images.add(ImageUtils.decompressImage(data.getImgdata()));
+            images.add(data.toString());
         }
 
         return images;

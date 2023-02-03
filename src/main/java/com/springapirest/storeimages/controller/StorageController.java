@@ -1,5 +1,6 @@
 package com.springapirest.storeimages.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.springapirest.storeimages.message.ResponseMessage;
 import com.springapirest.storeimages.service.StorageService;
 import com.springapirest.storeimages.util.Messages;
@@ -24,9 +25,10 @@ public class StorageController {
 
 
     @PostMapping
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<?> uploadImage(@RequestParam(value = "image",required = false) MultipartFile file) {
 
         try {
+
             String fileName = storageService.uploadImage(file);
 
             return ResponseEntity
@@ -34,7 +36,7 @@ public class StorageController {
                     .body(new ResponseMessage(
                             HttpStatus.OK.value(),
                             Messages.UPLOAD_SUCCESFULLY.getMessage(),
-                            Messages.URI.getMessage() + fileName
+                            fileName
                     ));
 
         } catch (Exception e) {
@@ -46,17 +48,17 @@ public class StorageController {
     @GetMapping(value = "/{fileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
 
-        List<byte[]> content = new ArrayList<>();
+        List<String> content = new ArrayList<>();
 
         try {
-            content.add(storageService.downloadImage(fileName));
+            content.add(storageService.downloadImage(fileName).toString());
 
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseMessage(
                             HttpStatus.OK.value(),
                             Messages.GET_SUCCESFULLY.getMessage(),
-                            Messages.GET_SUCCESFULLY.getMessage() + fileName,
-                            content
+                            Messages.URI_GET.getMessage() + fileName,
+                             content
                     ));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -68,21 +70,37 @@ public class StorageController {
 
         try {
 
-            List<byte[]> content = storageService.downloadImages();
+            List<String> content = storageService.downloadImages();
 
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseMessage(
                             HttpStatus.OK.value(),
                             Messages.GET_SUCCESFULLY.getMessage(),
-                            Messages.URI.getMessage(),
+                            Messages.URI.getMessage()+"/view/imageName",
                             content
+
                     ));
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
     }
+    @GetMapping(value = "/view/{fileName}", produces = {MediaType.IMAGE_PNG_VALUE,MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<?> viewImage(@PathVariable String fileName) {
+
+        try {
+            byte[] content= storageService.downloadImage(fileName);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(content);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @DeleteMapping(value = "/{fileName}")
     public ResponseEntity<?> deleteImage(@PathVariable String fileName) throws IOException {
@@ -97,7 +115,7 @@ public class StorageController {
                         .body(new ResponseMessage(
                                 HttpStatus.OK.value(),
                                 Messages.DELETE_SUCCESFULLY.getMessage(),
-                                Messages.URI.getMessage() + fileName
+                                null
                         ));
 
             }
@@ -106,7 +124,7 @@ public class StorageController {
                     .body(new ResponseMessage(
                             HttpStatus.NOT_FOUND.value(),
                             Messages.DELETE_ERROR.getMessage(),
-                            Messages.URI.getMessage() + fileName
+                            null
                     ));
 
         } catch (Exception e) {
