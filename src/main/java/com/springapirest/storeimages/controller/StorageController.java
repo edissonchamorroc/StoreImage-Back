@@ -77,7 +77,7 @@ public class StorageController {
                     .body(new ResponseMessage(
                             HttpStatus.OK.value(),
                             Messages.GET_SUCCESFULLY.getMessage(),
-                            Messages.URI.getMessage()+"/view/imageName",
+                            Messages.URI.getMessage()+"view/imageName",
                             content
 
                     ));
@@ -123,7 +123,7 @@ public class StorageController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseMessage(
                             HttpStatus.NOT_FOUND.value(),
-                            Messages.DELETE_ERROR.getMessage(),
+                            Messages.IMAGE_NOT_EXIST.getMessage(),
                             null
                     ));
 

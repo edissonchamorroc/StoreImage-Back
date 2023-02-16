@@ -6,9 +6,8 @@ public enum Messages {
     UPLOAD_SUCCESFULLY("Upload Successfully"),
     GET_SUCCESFULLY("Got the image successfully"),
     IMAGE_NOT_EXIST("The image does not exist!"),
-    DELETE_ERROR("Couldn't delete the image"),
-    URI("http://localhost:8080/api/image/"),
-    URI_GET("http://localhost:8080/api/image/view/")
+    URI("http://52.90.175.102/api/image/"),
+    URI_GET("http://52.90.175.102/api/image/view/")
 
     ;
     private String message;
