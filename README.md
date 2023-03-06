@@ -5,8 +5,8 @@ Dentro de los archivos en el repositorio, se omite por seguridad la configuraci√
 
 El proyecto est√° desplegado en una instancia de AWS EC2, por lo cual es posible realizar pruebas en su herramienta de preferencia.
 
-GET ALL IMAGES /POST: http://52.90.175.102/api/image/
-GET OR DELETE OF ONE IMAGES: http://52.90.175.102/api/image/nnmbre-imagen.formato
+GET ALL IMAGES /POST: http://localhost:8080/api/image/
+GET OR DELETE OF ONE IMAGES: http://localhost:8080/api/image/nnmbre-imagen.formato
 
 ## Estructura del proyecto
 
